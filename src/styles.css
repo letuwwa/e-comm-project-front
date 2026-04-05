@@ -88,6 +88,10 @@ code {
   padding: 1.5rem;
 }
 
+.public-panel {
+  margin-top: 1.5rem;
+}
+
 .panel-header,
 .actions,
 .product-card {
@@ -192,6 +196,17 @@ code {
 .empty-state p,
 .notice {
   margin: 0;
+}
+
+.owner-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  background: rgba(14, 116, 144, 0.12);
+  color: #155e75;
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .empty-state {

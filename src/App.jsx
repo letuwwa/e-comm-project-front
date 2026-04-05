@@ -105,10 +105,20 @@ function App() {
   const [authForm, setAuthForm] = useState(emptyAuthForm);
   const [productForm, setProductForm] = useState(emptyProductForm);
   const [products, setProducts] = useState([]);
+  const [publicProducts, setPublicProducts] = useState([]);
   const [isAuthenticated, setIsAuthenticated] = useState(Boolean(getStoredTokens().accessToken));
   const [isBusy, setIsBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
+  async function loadPublicProducts() {
+    try {
+      const data = await apiRequest('/products/public');
+      setPublicProducts(data);
+    } catch (loadError) {
+      setError(loadError.message);
+    }
+  }
 
   async function loadProducts() {
     setIsBusy(true);
@@ -129,6 +139,8 @@ function App() {
   }
 
   useEffect(() => {
+    loadPublicProducts();
+
     if (getStoredTokens().accessToken) {
       loadProducts();
     }
@@ -204,6 +216,7 @@ function App() {
       });
       setProductForm(emptyProductForm);
       setMessage('Product created.');
+      await loadPublicProducts();
       await loadProducts();
     } catch (createError) {
       setError(createError.message);
@@ -220,6 +233,7 @@ function App() {
     try {
       await authorizedRequest(`/products/${productId}`, { method: 'DELETE' });
       setProducts((current) => current.filter((product) => product.id !== productId));
+      setPublicProducts((current) => current.filter((product) => product.id !== productId));
       setMessage('Product deleted.');
     } catch (deleteError) {
       setError(deleteError.message);
@@ -410,6 +424,33 @@ function App() {
             )}
           </div>
         </article>
+      </section>
+
+      <section className="panel public-panel">
+        <div className="panel-header">
+          <h2>All products</h2>
+          <button className="ghost-button" type="button" onClick={loadPublicProducts} disabled={isBusy}>
+            Refresh public feed
+          </button>
+        </div>
+
+        <div className="product-list">
+          {publicProducts.length === 0 ? (
+            <div className="empty-state">
+              <p>No public products found.</p>
+            </div>
+          ) : (
+            publicProducts.map((product) => (
+              <div className="product-card" key={product.id}>
+                <div>
+                  <h3>{product.name}</h3>
+                  <p>{formatPrice(product.price)}</p>
+                </div>
+                <span className="owner-tag">{product.owner_email}</span>
+              </div>
+            ))
+          )}
+        </div>
       </section>
     </main>
   );
