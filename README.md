@@ -6,6 +6,7 @@ React + Vite frontend for the e-commerce studying project.
 
 - Node.js 20 or newer
 - npm
+- Docker, if you want to run the app in a container
 - Backend API running locally or remotely
 
 ## Start Guide
@@ -36,6 +37,49 @@ React + Vite frontend for the e-commerce studying project.
    ```text
    http://localhost:5173
    ```
+
+## Docker
+
+Build the production image:
+
+```bash
+docker build -t e-comm-project-front .
+```
+
+Run the container:
+
+```bash
+docker run --rm -p 8080:80 e-comm-project-front
+```
+
+Open the app at:
+
+```text
+http://localhost:8080
+```
+
+### API URL in Docker
+
+`VITE_API_URL` is used when the app is built, not when the container starts.
+Pass it as a Docker build argument if the backend is not available at the default URL:
+
+```bash
+docker build \
+  --build-arg VITE_API_URL=http://localhost:5000 \
+  -t e-comm-project-front .
+```
+
+Then run the image:
+
+```bash
+docker run --rm -p 8080:80 e-comm-project-front
+```
+
+For a backend running on the Docker host, use the host address that works for your Docker environment. On Docker Desktop, this is usually:
+
+```text
+http://host.docker.internal:5000
+```
 
 ## Available Scripts
 
